@@ -1,25 +1,23 @@
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Product, ProductDocument } from './schemas/product.schema';
+import { Product } from '@modules/product/schemas/product.schema';
 import { CreateProductDto, UpdateProductDto } from './dto';
+import { ProductRepository } from '@modules/product/product.repository';
 
 @Injectable()
 export class ProductService {
-  constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) { }
+  constructor(private readonly productRepo: ProductRepository) { }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    const product = new this.productModel(createProductDto);
-    return product.save();
+    return this.productRepo.create(createProductDto);
   }
 
   async findAll(): Promise<Product[]> {
-    return this.productModel.find().exec();
+    return this.productRepo.findAll();
   }
 
   async findOne(id: string): Promise<Product> {
-    const product = await this.productModel.findById(id).exec();
+    const product = await this.productRepo.findById(id);
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
@@ -29,9 +27,7 @@ export class ProductService {
   async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
 
 
-    const updatedProduct = await this.productModel.findByIdAndUpdate(id, updateProductDto, {
-      new: true,
-    }).exec();
+    const updatedProduct = await this.productRepo.update(id, updateProductDto);
     if (!updatedProduct) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
@@ -39,7 +35,7 @@ export class ProductService {
   }
 
   async remove(id: string): Promise<any> {
-    const result = await this.productModel.findByIdAndDelete(id).exec();
+    const result = await this.productRepo.delete(id);
     if (!result) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }

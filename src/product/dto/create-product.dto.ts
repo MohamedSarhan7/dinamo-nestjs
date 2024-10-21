@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
-
+import { IsNotEmpty, IsString, IsNumber, IsMongoId } from 'class-validator';
+import { Types } from 'mongoose';
 export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
@@ -14,8 +14,8 @@ export class CreateProductDto {
   description: string;
 
   @IsNotEmpty()
-  @IsString()
-  vendor: string;
+  @IsMongoId()
+  vendor: Types.ObjectId;
 
   @IsNotEmpty()
   @IsNumber()
