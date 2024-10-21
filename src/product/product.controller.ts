@@ -1,10 +1,9 @@
 import { Body, Controller, Post, Get, Param, Put, Delete, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiOperation, ApiResponse, } from '@nestjs/swagger';
 import { isMongoId } from '../common/pipes';
 import { Product } from '@modules/product/schemas/product.schema';
-import { ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('Product')
 @Controller('products')
@@ -12,10 +11,13 @@ export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @Post()
+  // @ApiOperation({ summary: 'Create cat' })
   async createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
   @Get()
+  // @ApiOperation({ summary: 'Create cat' })
+
   @ApiQuery({ name: 'search', required: false, type: String })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })

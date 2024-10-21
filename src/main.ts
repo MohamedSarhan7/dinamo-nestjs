@@ -4,6 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
+
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
@@ -28,6 +29,7 @@ async function bootstrap() {
     .setTitle('Backend Assignment')
     .setDescription('The Backend Assignment API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
