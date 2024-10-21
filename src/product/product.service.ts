@@ -12,8 +12,15 @@ export class ProductService {
     return this.productRepo.create(createProductDto);
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepo.findAll();
+  async findAll(
+    searchValue?: string,
+    page = 1,
+    limit = 10,
+    sortField: keyof Product = 'name' ,
+    sortOrder: 'asc' | 'desc' = 'asc',
+  ): Promise<{data:Product[], total: number}> {
+      const options= {searchValue, page, limit, sortField, sortOrder, searchField: 'name' as keyof Product};
+    return this.productRepo.findAll({}, options);
   }
 
   async findOne(id: string): Promise<Product> {

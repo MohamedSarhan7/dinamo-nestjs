@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductModule } from './product/product.module';
+import { VendorModule } from './vendor/vendor.module';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI || "mongodb://root:password@127.0.0.1:27017/nest-backend-assignment?authSource=admin"), ProductModule],
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI || "mongodb://root:password@127.0.0.1:27017/nest-backend-assignment?authSource=admin"), ProductModule, VendorModule],
   controllers: [AppController],
   providers: [AppService], 
 

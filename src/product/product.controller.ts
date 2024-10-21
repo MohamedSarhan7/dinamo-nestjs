@@ -1,8 +1,11 @@
-import { Body, Controller, Post, Get, Param, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Put, Delete, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
 import { isMongoId } from '../common/pipes';
+import { Product } from '@modules/product/schemas/product.schema';
+import { ApiQuery } from '@nestjs/swagger';
+
 @ApiTags('Product')
 @Controller('products')
 export class ProductController {
@@ -13,8 +16,18 @@ export class ProductController {
     return this.productService.create(createProductDto);
   }
   @Get()
-  async findAll() {
-    return this.productService.findAll();
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiQuery({ name: 'sortField', required: false, type: String, example: 'name' })
+  @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], example: 'asc' })
+  async findAll(
+    @Query('search') searchValue?: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('sortField') sortField = 'name' as keyof Product,
+    @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',) {
+    return this.productService.findAll(searchValue, page, limit, sortField, sortOrder);
   }
 
   @Get(':id')
