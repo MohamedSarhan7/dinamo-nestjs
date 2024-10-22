@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from '@modules/product/schemas/product.schema';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductRepository } from '@modules/product/product.repository';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ProductService {
@@ -23,7 +24,7 @@ export class ProductService {
     return this.productRepo.findAll({}, options);
   }
 
-  async findOne(id: string): Promise<Product> {
+  async findOne(id: Types.ObjectId): Promise<Product> {
     const product = await this.productRepo.findById(id);
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
@@ -31,7 +32,7 @@ export class ProductService {
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(id: Types.ObjectId, updateProductDto: UpdateProductDto): Promise<Product> {
 
 
     const updatedProduct = await this.productRepo.update(id, updateProductDto);
@@ -41,7 +42,7 @@ export class ProductService {
     return updatedProduct;
   }
 
-  async remove(id: string): Promise<any> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const result = await this.productRepo.delete(id);
     if (!result) {
       throw new NotFoundException(`Product with ID ${id} not found`);

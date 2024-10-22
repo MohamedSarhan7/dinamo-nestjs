@@ -3,6 +3,7 @@ import { VendorService } from '@modules/vendor/vendor.service';
 import { CreateVendorDto, UpdateVendorDto } from '@modules/vendor/dto';
 import { Vendor } from '@modules/vendor/schemas/vendor.schema';
 import { ApiQuery } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 @Controller('vendor')
 export class VendorController {
 
@@ -25,15 +26,15 @@ export class VendorController {
     return  this.vendorService.findAll(searchValue, page, limit, sortField, sortOrder);
   }
 
-  async findOne(id: string): Promise<Vendor> {
+  async findOne(id: Types.ObjectId): Promise<Vendor> {
     return  this.vendorService.findOne(id);
   }
 
-  async update(id: string, updateVendorDto: UpdateVendorDto): Promise<Vendor> {
+  async update(id: Types.ObjectId, updateVendorDto: UpdateVendorDto): Promise<Vendor> {
     return  this.vendorService.update(id, updateVendorDto);
   }
 
-  async remove(id: string): Promise<any> {
+  async remove(id: Types.ObjectId): Promise<any> {
     return  this.vendorService.remove(id);
   }
 }

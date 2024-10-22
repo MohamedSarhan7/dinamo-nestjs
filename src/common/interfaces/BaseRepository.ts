@@ -1,4 +1,4 @@
-import { Model, FilterQuery, UpdateQuery,Document } from 'mongoose';
+import { Model, FilterQuery, UpdateQuery,Document, Types } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { FindAllOptions } from './findAllOptions.interface';
 
@@ -12,7 +12,7 @@ export abstract class BaseRepository<T extends Document> {
   }
 
 
-  async findById(id: string): Promise<T> {
+  async findById(id: Types.ObjectId): Promise<T> {
     return  this.model.findById(id).exec();
   }
 
@@ -45,11 +45,11 @@ export abstract class BaseRepository<T extends Document> {
     // return this.model.find(filterQuery).exec();
   }
 
-  async update(id: string, updateDto: UpdateQuery<T>): Promise<T> {
+  async update(id: Types.ObjectId, updateDto: UpdateQuery<T>): Promise<T> {
     return this.model.findByIdAndUpdate(id, updateDto, { new: true }).exec();
   }
 
-  async delete(id: string): Promise<T> {
+  async delete(id: Types.ObjectId): Promise<T> {
     return this.model.findByIdAndDelete(id).exec();
   }
 

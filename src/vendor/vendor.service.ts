@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Vendor } from '@modules/vendor/schemas/vendor.schema';
 import { CreateVendorDto, UpdateVendorDto } from './dto';
 import { VendorRepository } from '@modules/vendor/vendor.repository';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class VendorService {
@@ -22,7 +23,7 @@ export class VendorService {
     return this.vendorRepo.findAll({}, options);
   }
 
-  async findOne(id: string): Promise<Vendor> {
+  async findOne(id: Types.ObjectId): Promise<Vendor> {
     const product = await this.vendorRepo.findById(id);
     if (!product) {
       throw new NotFoundException(`Vendor with ID ${id} not found`);
@@ -30,7 +31,7 @@ export class VendorService {
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateVendorDto): Promise<Vendor> {
+  async update(id: Types.ObjectId, updateProductDto: UpdateVendorDto): Promise<Vendor> {
 
 
     const updatedProduct = await this.vendorRepo.update(id, updateProductDto);
@@ -40,7 +41,7 @@ export class VendorService {
     return updatedProduct;
   }
 
-  async remove(id: string): Promise<any> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const result = await this.vendorRepo.delete(id);
     if (!result) {
       throw new NotFoundException(`Vendor with ID ${id} not found`);

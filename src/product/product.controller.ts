@@ -4,6 +4,7 @@ import { CreateProductDto, UpdateProductDto } from './dto';
 import { ApiTags, ApiQuery, ApiOperation, ApiResponse, } from '@nestjs/swagger';
 import { isMongoId } from '../common/pipes';
 import { Product } from '@modules/product/schemas/product.schema';
+import { Types } from 'mongoose';
 
 @ApiTags('Product')
 @Controller('products')
@@ -33,17 +34,17 @@ export class ProductController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: Types.ObjectId) {
     return this.productService.findOne(id);
   }
 
   @Put(':id')
-  async update(@Param('id',isMongoId) id: string, @Body() updateProductDto: UpdateProductDto) {
+  async update(@Param('id', isMongoId) id: Types.ObjectId, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id',isMongoId) id: string) {
+  async remove(@Param('id', isMongoId) id: Types.ObjectId) {
     return this.productService.remove(id);
   }
 }
