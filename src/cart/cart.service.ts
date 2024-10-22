@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CartRepository } from '@modules/cart/cart.repository';
 import { Cart } from './schemas/cart.schema';
-import { CreateCartDto } from './dto';
+import { CreateCartDto, UpdateCartDto } from './dto';
 import { ProductService } from '../product/product.service';
+import { Types } from 'mongoose';
 @Injectable()
 export class CartService {
 
@@ -24,8 +25,35 @@ export class CartService {
     newCart.totalPrice = totalPrice;
     return await this.cartRepo.create(newCart);
   }
+async getCart(id:Types.ObjectId): Promise<Cart> {
+  return await this.cartRepo.findById(id);
+}
+
+async updateCart(id:Types.ObjectId,cart: UpdateCartDto): Promise<Cart> {
+  const cartExists = await this.cartRepo.findById(id);
+  if (!cartExists) {
+    throw new NotFoundException(`Cart with ID ${id} not found`);
+  }
+  const newCart = {
+    userId:cart.userId,
+    products:cart.products,
+    totalPrice:0
+  }as Cart;
 
 
+  const totalPrice = await this.calculateTotalPrice(newCart);
+  newCart.totalPrice = totalPrice;
+  return await this.cartRepo.update(id,newCart);
+}
+
+
+async deleteCart(id:Types.ObjectId): Promise<Cart> {
+  const cartExists = await this.cartRepo.findById(id);
+  if (!cartExists) {
+    throw new NotFoundException(`Cart with ID ${id} not found`);
+  }
+  return await this.cartRepo.delete(id);
+}
   private async calculateTotalPrice(cart: Cart): Promise<number> {
     let totalPrice = 0;
 

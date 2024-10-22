@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
 import { VendorService } from '@modules/vendor/vendor.service';
 import { CreateVendorDto, UpdateVendorDto } from '@modules/vendor/dto';
 import { Vendor } from '@modules/vendor/schemas/vendor.schema';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
+@ApiTags('Vendor')
 @Controller('vendor')
 export class VendorController {
 
@@ -26,14 +27,17 @@ export class VendorController {
     return  this.vendorService.findAll(searchValue, page, limit, sortField, sortOrder);
   }
 
+  @Get(':id')
   async findOne(id: Types.ObjectId): Promise<Vendor> {
     return  this.vendorService.findOne(id);
   }
 
+  @Put(':id')
   async update(id: Types.ObjectId, updateVendorDto: UpdateVendorDto): Promise<Vendor> {
     return  this.vendorService.update(id, updateVendorDto);
   }
 
+  @Delete(':id')
   async remove(id: Types.ObjectId): Promise<any> {
     return  this.vendorService.remove(id);
   }
