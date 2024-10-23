@@ -1,10 +1,14 @@
-import { Body, Controller, Post, Get, Param, Put, Delete, Query } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ApiTags, ApiQuery, ApiOperation, ApiResponse, } from '@nestjs/swagger';
 import { isMongoId } from '../common/pipes';
 import { Product } from '@modules/product/schemas/product.schema';
 import { Types } from 'mongoose';
+import { AtGuard } from '@modules/common/guards';
+import { User } from '@modules/common/decorators';
+import {  RoleType } from '@modules/common/types';
+import { Roles } from '@modules/common/decorators';
 
 @ApiTags('Product')
 @Controller('products')
@@ -16,6 +20,8 @@ export class ProductController {
   async createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
+
+  @Roles(RoleType.USER)
   @Get()
   // @ApiOperation({ summary: 'Create cat' })
 
@@ -25,11 +31,15 @@ export class ProductController {
   @ApiQuery({ name: 'sortField', required: false, type: String, example: 'name' })
   @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], example: 'asc' })
   async findAll(
+    @User() user: any,
     @Query('search') searchValue?: string,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('sortField') sortField = 'name' as keyof Product,
-    @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',) {
+    @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
+  ) {
+
+    console.log("user",user)
     return this.productService.findAll(searchValue, page, limit, sortField, sortOrder);
   }
 

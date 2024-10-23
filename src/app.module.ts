@@ -6,7 +6,7 @@ import { ProductModule } from './product/product.module';
 import { VendorModule } from './vendor/vendor.module';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AtGuard } from './common/guards';
+import { AtGuard, RolesGuard } from './common/guards';
 import { CartModule } from './cart/cart.module';
 
 @Module({
@@ -14,10 +14,14 @@ import { CartModule } from './cart/cart.module';
   controllers: [AppController],
   providers: [
     AppService,
-  //   {
-  //   provide: APP_GUARD,
-  //   useClass:AtGuard
-  // }
+    {
+    provide: APP_GUARD,
+    useClass:AtGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard, // Add RolesGuard here
+    }
 ], 
 
 })

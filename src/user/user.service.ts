@@ -2,7 +2,7 @@ import { Injectable,BadRequestException } from '@nestjs/common';
 import { UserRepository } from '@modules/user/user.repository';
 import { LoginUserDto, CreateUserDto } from './dto';
 import * as bcrypt from 'bcryptjs';
-import { Tokens,JwtPayload } from '@modules/common/types';
+import { Tokens,JwtPayload, RoleType } from '@modules/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { Types } from 'mongoose';
 
@@ -24,7 +24,7 @@ export class UserService {
     if (!isPasswordValid) {
       throw new BadRequestException('Password is not valid');
     }
-    const tokens = await this.generateTokens(user.id, user.email);
+    const tokens = await this.generateTokens(user.id, user.email, user.type);
     const rtHash = await this.hashData(tokens.refresh_token);
     await this.userRepository.update(user.id, { rtHashed: rtHash });
     return { user, ...tokens };
@@ -39,7 +39,7 @@ export class UserService {
     createUserDto.password = hashedPassword;
 
     const user = await this.userRepository.create(createUserDto);
-    const tokens = await this.generateTokens(user.id, user.email);
+    const tokens = await this.generateTokens(user.id, user.email, user.type);
     const rtHash = await this.hashData(tokens.refresh_token);
     await this.userRepository.update(user.id, { rtHashed: rtHash });
     return { user, ...tokens };
@@ -56,20 +56,24 @@ export class UserService {
     if (!rtMatches) {
       throw new BadRequestException('Invalid refresh token');
     }
-    const tokens = await this.generateTokens(user.id, user.email);
+    const tokens = await this.generateTokens(user.id, user.email, user.type);
     const rtHash = await this.hashData(tokens.refresh_token);
     await this.userRepository.update(user.id, { rtHashed: rtHash });
     return { user, ...tokens };
   }
 
+  async findAll() {
+    return await this.userRepository.findAll();
+  }
   private async hashData(data: string) {
     return bcrypt.hash(data, 10);
   }
 
-  private async generateTokens(id: Types.ObjectId, email: string): Promise<Tokens> {
+  private async generateTokens(id: Types.ObjectId, email: string, type: RoleType): Promise<Tokens> {
     const JwtPayload: JwtPayload = {
       id,
       email,
+      type,
     };
 
     const [at, rt] = await Promise.all([

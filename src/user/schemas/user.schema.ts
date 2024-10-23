@@ -1,3 +1,4 @@
+import {  RoleType } from '@modules/common/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
@@ -16,6 +17,9 @@ export class User extends Document {
 
   @Prop({ })
   rtHashed: string;
+  @Prop({ enum: Object.values(RoleType),default: RoleType.USER })
+  type:RoleType ;
 }
+
 
 export const UserSchema = SchemaFactory.createForClass(User);
